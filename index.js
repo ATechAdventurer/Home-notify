@@ -1,18 +1,27 @@
 var express = require('express');
 var googlehome = require('google-home-notifier');
-var ngrok = require('ngrok');
-var localtunnel = require('localtunnel');
+var bonjour = require('bonjour')();
 var bodyParser = require('body-parser');
 var app = express();
+var http = require('http');
 var Config = require('./config');
 const serverPort = 8091; // default port
-
 var deviceName = 'Google Home';
-var ip = '192.168.86.30'; // default IP
-
+var ip = '192.168.86.250'; // default IP
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var casts = [];
 
 app.use(express.static(__dirname + '/views'));
+
+bonjour.find({ type: 'googlecast' }, function (service) {
+  var device = {};
+  device.id = service.txt.id;
+  device.title = service.txt.fn;
+  device.ip = service.addresses[0];
+  device.type = service.txt.md;
+  casts.push(device);
+});
+
 app.get('/', function (req, res){
     res.sendFile(__dirname + '/views/buttons.html');
 });
@@ -22,9 +31,10 @@ app.get('/sounds', function (req, res){
 });
 
 app.get('/devices', function (req, res){
-    let {devices} = Config;
-    res.send(devices);
+    //let {devices} = Config;
+    res.send(casts);
 });
+
 
 app.get('/google-home-notifier', function (req, res) {
 
@@ -81,7 +91,7 @@ app.listen(serverPort, function () {
 	console.log('POST example:');
 	console.log('curl -X POST -d "text=Hello Google Home" ' + url + '/google-home-notifier');
   });
-  */
+
   var tunnel = localtunnel(serverPort,{ subdomain: "cosbycompoundserver"},function(err, tunnel) {
       if (err){
         console.log(err)
@@ -91,4 +101,6 @@ app.listen(serverPort, function () {
       // i.e. https://abcdefgjhij.localtunnel.me
       console.log(tunnel.url);
   });
+  */
+  console.log("Started");
 })

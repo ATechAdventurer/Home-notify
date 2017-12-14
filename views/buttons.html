@@ -53,7 +53,7 @@
   content: "";
   display: block;
   margin-top: 0.8em;
-  
+
 }
 
 .Demo:hover {
@@ -283,13 +283,28 @@
   }
 }
 
+.device{
+  width:96px;
+  max-height:96px;
+  background-repeat: no-repeat;
+  padding-top: 100px;
+}
 
-    </style>
+#tv{
+  background-image: url("/tv.png");
+}
+
+#speaker{
+  background-image: url("/speaker.png");
+}
+
+</style>
 </head>
 <body>
   <div class="wrapper">
     <center><h1 style="text-align:center;">Cosby Compound</h1></center>
-  <center>    
+  <center>
+    <input type="text" class="input-box"><button class="send-btn" >Send</button>
   <div id="here" class="Grid Grid--gutters Grid--cols-3 u-textCenter">
   </div>
   <div class="buttons"></div>
@@ -297,28 +312,38 @@
  </div>
  <script src="/jquery.min.js"></script>
  <script>
+ var details = {};
  var ip = null;
+
  $(document).ready(function(e){
+    $('button.send-btn').click(function(){
+      $.get( "/google-home-notifier?text=" + $('.input-box').val() + (ip ? "&ip=" + ip : ""));
+    });
     $.getJSON( "/sounds", function( data ) {
       var items = [];
       var count = 0;
       $.each( data, function( key, val ) {
         items.push( `<div class="Grid-cell"><div class="Demo content-1of3" onclick="getter('${val.url}')">${val.title}</div></div>` );
       });
- 
+
       $('div.Grid').append(items.join(" "));
-      
+
     });
     $.getJSON( "/devices", function(data){
       var items = [];
       var count = 0;
       $.each(data, function(key, val){
-        items.push(`<button class="ip-chooser" onclick="test('${val.ip}')">${val.title}</button>`);
+        val.icon = "";
+        if(val.type === "Google Home")
+          val.icon = "speaker";
+        if( val.type === "Chromecast")
+          val.icon = "tv";
+        items.push(`<button class="ip-chooser" onclick="test('${val.ip}')"><div class="device" id="${val.icon}"></div>${val.title}</button>`);
       });
       $('div.buttons').append(items.join(" "));
     });
   });
-    
+
   /*$("button").on('click', '.ip-chooser', function(){
     alert("hi");
     //var ip = $(this).attr('id');
@@ -336,6 +361,7 @@
     console.log(options.text,options.ip);
     $.get( "/google-home-notifier?text=" + options.text + (options.ip ? "&ip=" + options.ip : ""));
   }
+
  </script>
 </body>
 </html>
