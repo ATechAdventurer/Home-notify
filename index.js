@@ -7,7 +7,10 @@ var http = require('http');
 var Config = require('./config');
 const serverPort = 8091; // default port
 var deviceName = 'Google Home';
-var ip = '192.168.86.250'; // default IP
+//var ip = '192.168.86.250'; // default IP
+var ip = require("ip");
+ip = ip.address();
+console.log(ip);
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var casts = [];
 

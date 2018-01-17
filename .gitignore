@@ -1,0 +1,4 @@
+node_modules/
+views/*.mp3
+views/*mp4
+*.DS_Store

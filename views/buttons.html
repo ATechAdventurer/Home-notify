@@ -334,10 +334,11 @@
       var count = 0;
       $.each(data, function(key, val){
         val.icon = "";
-        if(val.type === "Google Home")
+        if(val.type.indexOf("Google Home") !== -1 || val.type.indexOf("Group"))
           val.icon = "speaker";
-        if( val.type === "Chromecast")
+        if( val.type.indexOf("Chromecast") !== -1)
           val.icon = "tv";
+        console.log(val.title, val.type);
         items.push(`<button class="ip-chooser" onclick="test('${val.ip}')"><div class="device" id="${val.icon}"></div>${val.title}</button>`);
       });
       $('div.buttons').append(items.join(" "));
